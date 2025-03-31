@@ -101,6 +101,8 @@ CONTAINS
 # endif
 #endif
       !
+      ! RSRH test comment: Start timing model, if
+      !                    timing option is selected. 
       IF( ln_timing )   CALL timing_start('stp')
       !
       !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
