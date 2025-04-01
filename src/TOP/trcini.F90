@@ -27,7 +27,7 @@ MODULE trcini
    USE trcbc           ! generalized Boundary Conditions
    USE trcais          ! tracers from Antartic Ice Sheet
    USE trcbdy          ! passive-tracer open boundary conditions
- 
+   USE in_out_manager  ! I/O manager
    IMPLICIT NONE
    PRIVATE
    
@@ -248,7 +248,17 @@ CONTAINS
         !
         CALL trc_rst_read( Kbb, Kmm )
         !
-      ELSE                             ! Initialisation of tracer from a file that may also be used for damping
+#if defined key_isf        
+        !!=====================
+        !! ice-shelves coupling -- 
+        !!     filling ice freed, newly opened-or closed- cells 
+        CALL trc_ini_inv( Kmm ) !! check no NaNs before isfcpl_tr call
+        !! 
+        CALL isftrc_cpl_init(Kbb,Kmm, Kaa)
+        !!
+        !!=====================
+#endif
+      ELSE  ! Initialisation of tracer from a file that may also be used for damping
         IF( ln_trcdta .AND. nb_trcdta > 0 ) THEN
             ! update passive tracers arrays with input data read from file
             DO jn = 1, jptra
@@ -276,6 +286,82 @@ CONTAINS
       !                                                         ! Partial top/bottom cell: GRADh(tr(Kmm))
    END SUBROUTINE trc_ini_state
 
+#if defined key_isf
+   SUBROUTINE isftrc_cpl_init(Kbb, Kmm, Kaa)
+      !!---------------------------------------------------------------------
+      !!                   ***  ROUTINE iscpl_init  ***
+      !!
+      !! ** Purpose : correct ocean state for new wet cell and horizontal divergence
+      !!              correction for the dynamical adjustement
+      !!
+      !! ** Action : - compute ssh on new wet cell
+      !!             - compute T/S on new wet cell
+      !!             - compute horizontal divergence correction as a volume flux
+      !!             - compute the T/S/vol correction increment to keep trend to 0
+      !!
+      !!---------------------------------------------------------------------
+      USE isfcpl,  ONLY: isfcpl_tr, isfcpl_cons, id ! extend into new opened cells.
+      USE isf_oce                                   ! ice shelf variable
+      USE isftrc_oce                                ! trc shelf variable
+
+      !!
+      INTEGER, INTENT(in) :: Kbb, Kmm, Kaa      ! ocean time level indices
+      !!----------------------------------------------------------------------
+      !
+      ! allocation and initialisation to 0
+      CALL isftrc_alloc_cpl()
+      !
+      IF(lwp) WRITE(numout,*) ' isftrc_cpl_init:', id
+      IF (id == 0) THEN
+         IF(lwp) WRITE(numout,*) ' isftrc_cpl_init: restart variables for ice sheet coupling are missing, skip coupling for this leg '
+         IF(lwp) WRITE(numout,*) ' ~~~~~~~~~~~'
+         IF(lwp) WRITE(numout,*) ''
+      ELSE
+         !
+         ! extrapolation tracer properties
+         !CALL isfcpl_tr(Kmm,'TRA',ts,2)
+         !
+         ! correction of the horizontal divergence and associated temp. and salt content flux
+         ! Need to : - include in the cpl cons the risfcpl_vol/tsc contribution
+         !           - decide how to manage thickness level change in conservation
+         !CALL isfcpl_vol(Kmm)
+         !
+         ! apply the 'conservation' method
+         !IF ( ln_isfcpl_cons ) CALL isfcpl_cons(Kmm,'TRA',ts,2)
+         !
+         IF( ln_isfcpl ) THEN
+            IF (id == 0) THEN
+              IF(lwp) WRITE(numout,*) ' trc_ini_state: restart variables for ice sheet coupling are missing, skip coupling for this leg '
+              IF(lwp) WRITE(numout,*) ' ~~~~~~~~~~~'
+              IF(lwp) WRITE(numout,*) ' '
+            ELSE
+              !! run isfcpl.
+              !! but first - check the inventory before, just to make sure all is OK
+              !CALL trc_ini_inv( Kmm ) !! check no NaNs before isfcpl_tr call
+              !CALL flush(numout)
+              CALL isfcpl_tr(Kmm, 'TRC', tr, jptra)
+              IF(lwp) WRITE(numout,*) ' trcini -- isfcpl_tr done'
+              CALL flush(numout)
+              !         !
+              ! apply the 'conservation' method
+              IF(lwp) WRITE(numout,*) ' trcini -- isfcpl_cons starts '
+              IF ( ln_isfcpl_cons ) CALL isfcpl_cons(Kmm,'TRC', tr, jptra)
+              IF(lwp) WRITE(numout,*) ' trcini -- isfcpl_cons done '
+              CALL flush(numout)
+            ENDIF !! id
+         ENDIF  !! ln_isfcpl
+
+         !
+      END IF
+      !
+      !
+      ! all before fields set to now values
+      tr  (:,:,:,:,Kbb) = tr  (:,:,:,:,Kmm)
+      !uu   (:,:,:,Kbb)   = uu   (:,:,:,Kmm)
+      !vv   (:,:,:,Kbb)   = vv   (:,:,:,Kmm)
+      !ssh (:,:,Kbb)     = ssh (:,:,Kmm)
+   END SUBROUTINE isftrc_cpl_init
+#endif
 
    SUBROUTINE top_alloc
       !!----------------------------------------------------------------------
