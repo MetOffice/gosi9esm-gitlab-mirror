@@ -300,10 +300,11 @@ CONTAINS
       !!             - compute the T/S/vol correction increment to keep trend to 0
       !!
       !!---------------------------------------------------------------------
-      USE isfcpl,  ONLY: isfcpl_tr, isfcpl_cons, id ! extend into new opened cells.
-      USE isf_oce                                   ! ice shelf variable
-      USE isftrc_oce                                ! trc shelf variable
-
+      USE isfcpl,     ONLY : isfcpl_tr, isfcpl_cons, id
+                                             ! extend into new opened cells.
+      USE isf_oce                            ! ice shelf variable
+      USE isftrc_oce                         ! trc shelf variable
+      USE isftrc_cpl, ONLY : isfcpl_vol_pt   ! compute vol correction
       !!
       INTEGER, INTENT(in) :: Kbb, Kmm, Kaa      ! ocean time level indices
       !!----------------------------------------------------------------------
@@ -341,13 +342,14 @@ CONTAINS
               !CALL flush(numout)
               CALL isfcpl_tr(Kmm, 'TRC', tr, jptra)
               IF(lwp) WRITE(numout,*) ' trcini -- isfcpl_tr done'
-              CALL flush(numout)
-              !         !
+              !CALL flush(numout)
+              !! Volume correction after coupling
+              CALL isfcpl_vol_pt(Kmm)
               ! apply the 'conservation' method
               IF(lwp) WRITE(numout,*) ' trcini -- isfcpl_cons starts '
               IF ( ln_isfcpl_cons ) CALL isfcpl_cons(Kmm,'TRC', tr, jptra)
               IF(lwp) WRITE(numout,*) ' trcini -- isfcpl_cons done '
-              CALL flush(numout)
+              !CALL flush(numout)
             ENDIF !! id
          ENDIF  !! ln_isfcpl
 

@@ -29,7 +29,7 @@ MODULE isftrc_cpl
 
    PRIVATE
    !
-   PUBLIC update_isfptr,get_correction_pt  ! iceshelf restart read and write
+   PUBLIC update_isfptr,get_correction_pt, isfcpl_vol_pt ! iceshelf restart read and write
    !
    !!---------------------------------------------------------------------
    !
@@ -113,5 +113,26 @@ CONTAINS
       END DO
 
    END SUBROUTINE get_correction_pt
+   !
+   SUBROUTINE isfcpl_vol_pt(Kmm)
+         !!----------------------------------------------------------------------
+      !!                   ***  ROUTINE iscpl_vol  ***
+      !!
+      !! ** Purpose : compute the correction of the local divergence to apply
+      !!              during the first time step after the coupling.
+      !!
+      !! ** Method  : - compute correction to passive tracers
+      !!
+      !!----------------------------------------------------------------------
+      !!
+      USE trc,        ONLY : tr, ctrcnm
+      !!
+      INTEGER, INTENT(in) :: Kmm    ! ocean time level index
+      !!----------------------------------------------------------------------
+     DO jn = 1,kjpt
+        risfcpl_trc(:,:,:,jn) = -risfcpl_vol(:,:,:) * tr(:,:,:,jn,Kmm)
+     END DO
+     !!
+   SUBROUTINE isfcpl_vol_pt
    !
 END MODULE isftrc_cpl

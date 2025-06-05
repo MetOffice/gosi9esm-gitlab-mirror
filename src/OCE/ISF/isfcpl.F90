@@ -509,7 +509,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       !
 #if defined key_top
-      USE trc,        ONLY : tr, ctrcnm
+      USE trc,        ONLY : ctrcnm
       USE isftrc_cpl, ONLY : update_isfptr, get_correction_pt
 #endif
       !!----------------------------------------------------------------------
@@ -629,9 +629,10 @@ CONTAINS
 #if defined key_top
      ELSEIF( cdtype == 'TRC' ) THEN
         !! need the vol update as well as done for T-S in isfcpl_vol() :
-        DO jn = 1,kjpt
-           risfcpl_trc(:,:,:,jn) = -risfcpl_vol(:,:,:) * pt(:,:,:,jn,Kmm)
-        END DO
+        !! now moved out into isfcpl_vol_pt
+        ! DO jn = 1,kjpt
+        !   risfcpl_trc(:,:,:,jn) = -risfcpl_vol(:,:,:) * pt(:,:,:,jn,Kmm)
+        ! END DO
         !!
         DO jk = 1,jpk-1
             DO jj = Njs0,Nje0

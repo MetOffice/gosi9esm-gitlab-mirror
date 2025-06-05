@@ -105,7 +105,7 @@ CONTAINS
       !
       DO_3D( 0, 0, 0, 0, 1, jpk )
          DO jn = 1, jptra
-          ptsa(ji,jj,jk,jn) = ptsa(ji,jj,jk,jn) + ptsc(ji,jj,jk,jp_tem) * r1_e1e2t(ji,jj) / e3t(ji,jj,jk,Kmm)
+          ptsa(ji,jj,jk,jn) = ptsa(ji,jj,jk,jn) + ptsc(ji,jj,jk,jn) * r1_e1e2t(ji,jj) / e3t(ji,jj,jk,Kmm)
          END DO
       END_3D
       !
