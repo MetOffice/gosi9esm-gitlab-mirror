@@ -133,6 +133,6 @@ CONTAINS
         risfcpl_trc(:,:,:,jn) = -risfcpl_vol(:,:,:) * tr(:,:,:,jn,Kmm)
      END DO
      !!
-   SUBROUTINE isfcpl_vol_pt
+   END SUBROUTINE isfcpl_vol_pt
    !
 END MODULE isftrc_cpl
