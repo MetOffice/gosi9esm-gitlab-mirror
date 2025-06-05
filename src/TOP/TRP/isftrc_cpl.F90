@@ -125,7 +125,7 @@ CONTAINS
       !!
       !!----------------------------------------------------------------------
       !!
-      USE trc,        ONLY : tr, ctrcnm
+      USE trc,        ONLY : tr   !! passive tracer array
       !!
       INTEGER, INTENT(in) :: Kmm    ! ocean time level index
       INTEGER             :: jn     ! local loop integer
