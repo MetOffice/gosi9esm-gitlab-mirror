@@ -128,8 +128,9 @@ CONTAINS
       USE trc,        ONLY : tr, ctrcnm
       !!
       INTEGER, INTENT(in) :: Kmm    ! ocean time level index
+      INTEGER             :: jn     ! local loop integer
       !!----------------------------------------------------------------------
-     DO jn = 1,kjpt
+     DO jn = 1,jptra
         risfcpl_trc(:,:,:,jn) = -risfcpl_vol(:,:,:) * tr(:,:,:,jn,Kmm)
      END DO
      !!
