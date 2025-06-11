@@ -313,52 +313,45 @@ CONTAINS
       CALL isftrc_alloc_cpl()
       !
       IF(lwp) WRITE(numout,*) ' isftrc_cpl_init:', id
-      IF (id == 0) THEN
-         IF(lwp) WRITE(numout,*) ' isftrc_cpl_init: restart variables for ice sheet coupling are missing, skip coupling for this leg '
-         IF(lwp) WRITE(numout,*) ' ~~~~~~~~~~~'
-         IF(lwp) WRITE(numout,*) ''
-      ELSE
-         !
-         ! extrapolation tracer properties
-         !CALL isfcpl_tr(Kmm,'TRA',ts,2)
-         !
-         ! correction of the horizontal divergence and associated temp. and salt content flux
-         ! Need to : - include in the cpl cons the risfcpl_vol/tsc contribution
-         !           - decide how to manage thickness level change in conservation
-         !CALL isfcpl_vol(Kmm)
-         !
-         ! apply the 'conservation' method
-         !IF ( ln_isfcpl_cons ) CALL isfcpl_cons(Kmm,'TRA',ts,2)
-         !
-         IF( ln_isfcpl ) THEN
-            IF (id == 0) THEN
-              IF(lwp) WRITE(numout,*) ' trc_ini_state: restart variables for ice sheet coupling are missing, skip coupling for this leg '
-              IF(lwp) WRITE(numout,*) ' ~~~~~~~~~~~'
-              IF(lwp) WRITE(numout,*) ' '
-            ELSE
-              !! run isfcpl.
-              !! but first - check the inventory before, just to make sure all is OK
-              !CALL trc_ini_inv( Kmm ) !! check no NaNs before isfcpl_tr call
-              !CALL flush(numout)
-              CALL isfcpl_tr(Kmm, 'TRC', tr, jptra)
-              IF(lwp) WRITE(numout,*) ' trcini -- isfcpl_tr done'
-              !CALL flush(numout)
-              !! Volume correction after coupling
-              CALL isfcpl_vol_pt(Kmm)
-              ! apply the 'conservation' method
-              IF(lwp) WRITE(numout,*) ' trcini -- isfcpl_cons starts '
-              IF ( ln_isfcpl_cons ) CALL isfcpl_cons(Kmm,'TRC', tr, jptra)
-              IF(lwp) WRITE(numout,*) ' trcini -- isfcpl_cons done '
-              !CALL flush(numout)
-            ENDIF !! id
-         ENDIF  !! ln_isfcpl
-
-         !
-      END IF
+      !
+      ! extrapolation tracer properties
+      !CALL isfcpl_tr(Kmm,'TRA',ts,2)
+      !
+      ! correction of the horizontal divergence and associated temp. and salt content flux
+      ! Need to : - include in the cpl cons the risfcpl_vol/tsc contribution
+      !           - decide how to manage thickness level change in conservation
+      !CALL isfcpl_vol(Kmm)
+      !
+      ! apply the 'conservation' method
+      !IF ( ln_isfcpl_cons ) CALL isfcpl_cons(Kmm,'TRA',ts,2)
+      !
+      IF( ln_isfcpl ) THEN
+         IF (id == 0) THEN
+            IF(lwp) WRITE(numout,*) ' trc_ini_state: restart variables for ice sheet coupling are missing, skip coupling for this submission. '
+            IF(lwp) WRITE(numout,*) ' Should work better at the next restart '
+            IF(lwp) WRITE(numout,*) ' ~~~~~~~~~~~'
+            IF(lwp) WRITE(numout,*) ' '
+         ELSE
+            !! run isfcpl.
+            !! but first - check the inventory before, just to make sure all is OK
+            !CALL trc_ini_inv( Kmm ) !! check no NaNs before isfcpl_tr call
+            !CALL flush(numout)
+            CALL isfcpl_tr(Kmm, 'TRC', tr, jptra)
+            IF(lwp) WRITE(numout,*) ' trcini -- isfcpl_tr done'
+            !CALL flush(numout)
+            !! Volume correction after coupling
+            CALL isfcpl_vol_pt(Kmm)
+            ! apply the 'conservation' method
+            IF(lwp) WRITE(numout,*) ' trcini -- isfcpl_cons starts '
+            IF ( ln_isfcpl_cons ) CALL isfcpl_cons(Kmm,'TRC', tr, jptra)
+            IF(lwp) WRITE(numout,*) ' trcini -- isfcpl_cons done '
+            !CALL flush(numout)
+         ENDIF !! id
+      ENDIF  !! ln_isfcpl
       !
       !
       ! all before fields set to now values
-      tr  (:,:,:,:,Kbb) = tr  (:,:,:,:,Kmm)
+      !tr  (:,:,:,:,Kbb) = tr  (:,:,:,:,Kmm) !! no need here - done in trc_ici_state
       !uu   (:,:,:,Kbb)   = uu   (:,:,:,Kmm)
       !vv   (:,:,:,Kbb)   = vv   (:,:,:,Kmm)
       !ssh (:,:,Kbb)     = ssh (:,:,Kmm)
