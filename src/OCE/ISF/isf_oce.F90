@@ -17,6 +17,9 @@ MODULE isf_oce
    USE in_out_manager, ONLY: wp, jpts ! I/O manager
    USE lib_mpp       , ONLY: ctl_stop, mpp_sum      ! MPP library
    USE fldread        ! read input fields
+#if defined key_top
+   USE par_trc , ONLY : jptra
+#endif
 
    IMPLICIT NONE
 

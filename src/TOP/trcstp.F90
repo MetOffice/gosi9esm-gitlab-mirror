@@ -25,6 +25,11 @@ MODULE trcstp
    USE prtctl         ! Print control for debbuging
    USE iom            !
    USE in_out_manager !
+   !
+#if defined key_isf
+   USE isf_oce,     ONLY : ln_isfcpl
+   USE trcisf,      ONLY : trc_isf
+#endif
 
    IMPLICIT NONE
    PRIVATE
@@ -109,6 +114,9 @@ CONTAINS
       IF( lrst_trc )  CALL trc_rst_cal  ( kt, 'WRITE' )   ! calendar
       CALL trc_wri      ( kt,      Kmm            )       ! output of passive tracers with iom I/O manager
       CALL trc_sms      ( kt, ibb, Kmm, Krhs      )       ! tracers: sinks and sources
+#if defined key_isf
+      IF( ln_isfcpl)  CALL trc_isf      ( kt, Kmm, tr, Krhs )  ! ice shelf coupling
+#endif
 #if ! defined key_sed_off
       CALL trc_trp      ( kt, ibb, Kmm, Krhs, Kaa )       ! transport of passive tracers
 #endif
