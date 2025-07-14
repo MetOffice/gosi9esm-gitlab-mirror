@@ -734,8 +734,9 @@ CONTAINS
       !!
       !! ** Method  :   Formula (Bitz and Lipscomb, 1999)
       !!-------------------------------------------------------------------
-      INTEGER  ::   ji, jk   ! dummy loop indices
-      REAL(wp) ::   ztmelts  ! local scalar
+      INTEGER  ::   ji, jk                         ! dummy loop indices
+      REAL(wp) ::   ztmelts                        ! local scalar
+      REAL(wp), PARAMETER  ::  zepsi  = -epsi20    ! tolerance parameter
       !!-------------------------------------------------------------------
       !
       DO jk = 1, nlay_i             ! Sea ice energy of melting
@@ -744,7 +745,7 @@ CONTAINS
             t_i_1d(ji,jk) = MIN( t_i_1d(ji,jk), ztmelts + rt0 ) ! Force t_i_1d to be lower than melting point => likely conservation issue
                                                                 !   (sometimes zdf scheme produces abnormally high temperatures)
             e_i_1d(ji,jk) = rhoi * ( rcpi  * ( ztmelts - ( t_i_1d(ji,jk) - rt0 ) )           &
-               &                   + rLfus * ( 1._wp - ztmelts / ( t_i_1d(ji,jk) - rt0 ) )   &
+               &                   + rLfus * ( 1._wp - ztmelts / MIN( t_i_1d(ji,jk) - rt0, zepsi ) )   &
                &                   - rcp   * ztmelts )
          END DO
       END DO
