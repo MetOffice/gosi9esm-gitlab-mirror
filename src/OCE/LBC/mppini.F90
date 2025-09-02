@@ -1414,39 +1414,6 @@ ENDIF
       Ni_0 = Nie0 - Nis0 + 1
       Nj_0 = Nje0 - Njs0 + 1
 
-      ! Start and end indexes for actual coupling fields on extended grid
-      Nis0_ext = Nis0
-      Nie0_ext = Nie0
-      Njs0_ext = Njs0
-      Nje0_ext = Nje0
-      IF (mig(1) == 1 ) THEN
-         ! Drag start column 1 place to the left/west
-         Nis0_ext=Nis0_ext-1
-      ENDIF
-
-      IF (mig(jpi) == jpiglo ) THEN
-         ! Drag end column 1 place to the right/east
-         Nie0_ext=Nie0_ext+1
-      ENDIF
-
-
-     ! RSRH we don't adjust anything in the N-S (j) direction
-     ! since the content of the N-fold is catared for by populating values 
-     ! using lbc_lnk rather than relying on getting them from the coupler. 
-     ! This is rather confused by the fact that jpjglo has a value BIGGER
-     ! than it did at pre 4.2... e.g. for ORCA1 it's set to 333 instead of 332
-     ! which is rather baffling and confuses some dimensioning calculations
-     ! which previously worked fine pre 4.2. 
-
-
-      ! Set up dimensions for old style coupling exchanges on extended grid
-      Ni_0_ext = Ni_0
-      Nj_0_ext = Nj_0
-      IF (mig(1) == 1 .OR. mig(jpi) == jpiglo ) THEN
-         ! We're at the extreme left or right edge of the grid so need to cater
-         ! for an extra column
-         Ni_0_ext = Ni_0_ext + 1
-      ENDIF
 
      
       !
