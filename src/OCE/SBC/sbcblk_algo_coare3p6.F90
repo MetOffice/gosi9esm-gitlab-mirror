@@ -292,8 +292,10 @@ CONTAINS
          z0    = charn_coare3p6(ztmp2)*ztmp1/grav + 0.11_wp*znu_a/u_star   ! Roughness length (eq.6) [ ztmp1==u*^2 ]
          z0     = MIN( MAX(ABS(z0), 1.E-9) , 1._wp )                      ! (prevents FPE from stupid values from masked region later on)
 
-         ztmp1 = ( znu_a / (z0*u_star) )**0.72_wp     ! COARE3.6-specific! (1./Re_r)^0.72 (Re_r: roughness Reynolds number) COARE3.6-specific!
-         z0t   = MIN( 1.6E-4_wp , 5.8E-5_wp*ztmp1 )   ! COARE3.6-specific!
+         !!ztmp1 = ( znu_a / (z0*u_star) )**0.72_wp     ! COARE3.6-specific! (1./Re_r)^0.72 (Re_r: roughness Reynolds number) COARE3.6-specific!
+         ztmp1 = ( znu_a / (z0*u_star) )**0.6_wp      ! COARE implementation in UM
+         !!z0t   = MIN( 1.6E-4_wp , 5.8E-5_wp*ztmp1 )   ! COARE3.6-specific!
+         z0t   = MIN( 1.15E-4_wp , 5.5E-5_wp*ztmp1 )    ! COARE implementation in UM. Uses 1.15E-4_wp instead of 1.1E-4 in NEMO v4.0.x
          z0t   = MIN( MAX(ABS(z0t), 1.E-9) , 1._wp )                      ! (prevents FPE from stupid values from masked region later on)
 
          !! Turbulent scales at zu :
@@ -381,9 +383,9 @@ CONTAINS
       REAL(wp), DIMENSION(jpi,jpj) :: charn_coare3p6
       REAL(wp), DIMENSION(jpi,jpj), INTENT(in) :: pwnd   ! neutral wind speed at 10m
       !
-      REAL(wp), PARAMETER :: charn0_max = 0.028  !: value above which the Charnock parameter levels off for winds > 18 m/s
+      REAL(wp), PARAMETER :: charn0_max = 0.0317  !: value above which the Charnock parameter levels off for winds > 22 m/s. Value used in UM/GC5.
       !!-------------------------------------------------------------------
-      charn_coare3p6 = MAX( MIN( 0.0017_wp*pwnd - 0.005_wp , charn0_max) , 0._wp )
+      charn_coare3p6 = MAX( MIN( 0.0016_wp*pwnd - 0.0035_wp , charn0_max) , 0._wp )   ! Using coefficients used in UM/GC5.
       !!
    END FUNCTION charn_coare3p6
 
