@@ -1,0 +1,116 @@
+!! NEMO/OCE :   Configuration namelist_cfg used to overwrite defaults value defined in namelist_ref
+!!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!! NEMO/OCE  :  1 - Domain & run manager (namrun, namcfg, namdom, namzgr, namzgr_sco )
+!!              2 - diagnostics      (namnc4)
+!!              3 - miscellaneous    (nammpp, namctl)
+!!
+!! namelist skeleton : egrep -E '(^/ *$|^! *$|^ *$|&nam.*|!---.*|!! .*|!!==.*|!!>>>.*)' namelist_ref > namelist_skl
+!!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!-----------------------------------------------------------------------
+&namrun        !   parameters of the run
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namdom        !   space and time domain (bathymetry, mesh, timestep)
+!-----------------------------------------------------------------------
+   ln_read_cfg = .false.   !  Read from a domain_cfg file
+   nn_bathy    =    1      ! = 0 compute analyticaly
+                           ! = 1 read the bathymetry file
+                           ! = 2 compute from external bathymetry
+                           ! = 3 compute from parent (if "key_agrif")
+   nn_interp   =    1                          ! type of interpolation (nn_bathy =2)
+   cn_domcfg   = 'coordinates.nc'          ! Name of the domain_cfg input file
+   cn_fcoord   =  'coordinates.nc'             ! external coordinates file (jphgr_msh = 0)
+   cn_topo     =  'bathy_level.nc           '  ! external topo file (nn_bathy =1/2)
+   cn_topolvl  =  'bathy_level.nc           '  ! external topo file (nn_bathy =1)
+   cn_fisfd    =  'bathy_level.nc'         ! external isf draft (nn_bathy =1 and ln_isfcav = .true.)
+   cn_bath     =  'Bathymetry_isf'
+   cn_bathlvl  =  'Bathymetry'                ! lvl name in file   (nn_bathy =1)
+   cn_visfd    =  'isf_draft'                  ! isf draft variable (nn_bathy =1 and ln_isfcav = .true.)
+   cn_lon      = 'glamt'
+   cn_lat      = 'gphit'
+   rn_scale    = -1        !  multiplicative factor to account for possibly negative input bathymetry
+   rn_bathy    =    0.     !  value of the bathymetry. if (=0) bottom flat at jpkm1
+   nn_msh      =    1      !  create (=1) a mesh file or not (=0)
+   jphgr_msh   =       0               !  type of horizontal mesh
+   ppglam0     =  999999.0             !  longitude of first raw and column T-point (jphgr_msh = 1)
+   ppgphi0     =  999999.0             ! latitude  of first raw and column T-point (jphgr_msh = 1)
+   ppe1_deg    =  999999.0             !  zonal      grid-spacing (degrees)
+   ppe2_deg    =  999999.0             !  meridional grid-spacing (degrees)
+   ppe1_m      =  999999.0             !  zonal      grid-spacing (degrees)
+   ppe2_m      =  999999.0             !  meridional grid-spacing (degrees)
+   ppsur       =   -3958.951371276829  !  ORCA r4, r2 and r05 coefficients
+   ppa0        =     103.9530096000000 ! (default coefficients)
+   ppa1        =       2.415951269000000   !
+   ppkth       =      15.35101370000000    !
+   ppacr       =       7.0             !
+   ppdzmin     =  999999.              !  Minimum vertical spacing
+   pphmax      =  999999.              !  Maximum depth
+   ldbletanh   =  .TRUE.               !  Use/do not use double tanf function for vertical coordinates
+   ppa2        =     100.7609285000000 !  Double tanh function parameters
+   ppkth2      =      48.02989372000000    !
+   ppacr2      =      13.00000000000   !
+/
+!-----------------------------------------------------------------------
+&namcfg        !   parameters of the configuration
+!-----------------------------------------------------------------------
+   !
+   ln_e3_dep   = .true.    ! =T : e3=dk[depth] in discret sens.
+   !                       !      ===>>> will become the only possibility in v4.0
+   !                       ! =F : e3 analytical derivative of depth function
+   !                       !      only there for backward compatibility test with v3.6
+      !                      ! if ln_e3_dep = T
+      ln_dept_mid = .true.   ! =T : set T points in the middle of cells
+      !                       ! =F : e3 analytical depth function
+   !                       !
+   cp_cfg = 'orca'
+   jp_cfg      =     1   !  resolution of the configuration
+   jpidta      = 360
+   jpjdta      = 331
+   jpkdta      =      75   !  number of levels      ( >= jpk )
+   Ni0glo      = 360
+   Nj0glo      = 331
+   jpkglo      =      75
+   jperio      = 6   !  lateral cond. type (between 0 and 6)
+   ln_use_jattr = .false.  !  use (T) the file attribute: open_ocean_jstart, if present
+                           !  in netcdf input files, as the start j-row for reading
+   ln_domclo = .true.     ! computation of closed sea masks (see namclo)
+/
+!-----------------------------------------------------------------------
+&namzgr        !   vertical coordinate                                  (default: NO selection)
+!-----------------------------------------------------------------------
+!-----------------------------------------------------------------------
+   ln_zco      = .false.   !  z-coordinate - full    steps
+   ln_zps      = .true.   !  z-coordinate - partial steps
+   ln_sco      = .false.   !  s- or hybrid z-s-coordinate
+   ln_isfcav   = .true.   !  ice shelf cavity             (T: see namzgr_isf)
+/
+!-----------------------------------------------------------------------
+&namzgr_isf    !   isf cavity geometry definition
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namzgr_sco    !   s-coordinate or hybrid z-s-coordinate                (default F)
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namclo ! (closed sea : need ln_domclo = .true. in namcfg)
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namlbc        !   lateral momentum boundary condition                  (default: NO selection)
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namagrif      !  AGRIF zoom                                            ("key_agrif")
+!-----------------------------------------------------------------------
+   ln_Agrif_GrandPa = .false.     ! true if root grid is a coarsened grid
+   ln_remove_closedseas = .true. ! Fill lakes inside zoom
+   ln_vert_remap = .false. ! volume conserving update
+   npt_connect   = 2
+   npt_copy      = 4 
+/
+!-----------------------------------------------------------------------
+&namnc4        !   netcdf4 chunking and compression settings            ("key_netcdf4")
+!-----------------------------------------------------------------------
+/
