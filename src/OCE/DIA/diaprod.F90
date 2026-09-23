@@ -15,12 +15,8 @@ MODULE diaprod
    USE oce             ! ocean dynamics and tracers 
    USE dom_oce         ! ocean space and time domain
    USE domvvl          ! for thickness weighted diagnostics if key_vvl
-   USE eosbn2          ! equation of state  (eos call)
-   USE phycst          ! physical constants
-   USE lbclnk          ! ocean lateral boundary conditions (or mpp link)
    USE in_out_manager  ! I/O manager
    USE iom
-   USE ioipsl
    USE lib_mpp         ! MPP library
    USE timing          ! preformance summary
 
@@ -64,21 +60,9 @@ CONTAINS
       ! 
       ALLOCATE( z2d(jpi,jpj), z3d(jpi,jpj,jpk), zrhop(jpi,jpj,jpk) )
       !
-
-      IF( iom_use("urhop") .OR. iom_use("vrhop") .OR. iom_use("wrhop") &
-#if ! defined key_diaar5
-     &  .OR. iom_use("rhop") &
-#endif
-     & ) THEN
-         CALL eos( ts(:,:,:,:,Kmm), z3d, zrhop )                 ! now in situ and potential density
-         zrhop(:,:,:) = zrhop(:,:,:)-1000.e0         ! reference potential density to 1000 to avoid precision issues in rhop2 calculation
+      IF( iom_use("urhop") .OR. iom_use("vrhop") .OR. iom_use("wrhop") ) THEN
+         zrhop(:,:,1:jpkm1) = rhop(T2D(1),1:jpkm1) - 1000._wp         ! reference potential density to 1000 to avoid precision issues in rhop2 calculation
          zrhop(:,:,jpk) = 0._wp
-#if ! defined key_diaar5
-         CALL iom_put( 'rhop', zrhop )
-#else
-         ! If key_diaar5 set then there is already an iom_put call to output rhop.
-         ! Really should be a standard diagnostics option?
-#endif
       ENDIF
 
       IF( iom_use("ut") ) THEN
@@ -103,7 +87,7 @@ CONTAINS
                z3d(ji,jj,1) = ww(ji,jj,1) * ts(ji,jj,1,jp_tem,Kmm)
          END_2D
          
-         DO_3D( 0, 0, 0, 0, 1, jpk )
+         DO_3D( 0, 0, 0, 0, 2, jpk )
                   z3d(ji,jj,jk) = ww(ji,jj,jk) * 0.5 * ( ts(ji,jj,jk-1,jp_tem,Kmm) + ts(ji,jj,jk,jp_tem,Kmm) )
          END_3D
          CALL iom_put( "wt", z3d )                  ! product of temperature and vertical velocity at W points
@@ -131,7 +115,7 @@ CONTAINS
                z3d(ji,jj,1) = ww(ji,jj,1) * ts(ji,jj,1,jp_sal,Kmm)
          END_2D
          
-         DO_3D( 0, 0, 0, 0, 1, jpk )
+         DO_3D( 0, 0, 0, 0, 2, jpk )
                   z3d(ji,jj,jk) = ww(ji,jj,jk) * 0.5 * ( ts(ji,jj,jk-1,jp_sal,Kmm) + ts(ji,jj,jk,jp_sal,Kmm) )
          END_3D
          
@@ -152,7 +136,7 @@ CONTAINS
                z3d(ji,jj,1) = 0.5 * ( ww(ji,jj,1) + ww(ji+1,jj,1) ) * uu(ji,jj,1,Kmm) 
          END_2D
          
-         DO_3D( 0, 0, 0, 0, 1, jpk )
+         DO_3D( 0, 0, 0, 0, 2, jpk )
                   z3d(ji,jj,jk) = 0.25 * ( ww(ji,jj,jk) + ww(ji+1,jj,jk) ) * ( uu(ji,jj,jk-1,Kmm) + uu(ji,jj,jk,Kmm) ) 
          END_3D
          CALL iom_put( "uw", z3d )                  ! product of zonal velocity and vertical velocity at UW points
@@ -164,7 +148,7 @@ CONTAINS
                z3d(ji,jj,1) = 0.5 * ( ww(ji,jj,1) + ww(ji,jj+1,1) ) * vv(ji,jj,1,Kmm) 
          END_2D
          
-         DO_3D( 0, 0, 0, 0, 1, jpk )
+         DO_3D( 0, 0, 0, 0, 2, jpk )
                   z3d(ji,jj,jk) = 0.25 * ( ww(ji,jj,jk) + ww(ji,jj+1,jk) ) * ( vv(ji,jj,jk-1,Kmm) + vv(ji,jj,jk,Kmm) ) 
          END_3D
          CALL iom_put( "vw", z3d )                  ! product of meriodional velocity and vertical velocity at VW points
@@ -191,7 +175,7 @@ CONTAINS
          DO_2D( 0, 0, 0, 0 )
                z3d(ji,jj,1) = ww(ji,jj,1) * zrhop(ji,jj,1)
          END_2D
-         DO_3D( 0, 0, 0, 0, 1, jpk )
+         DO_3D( 0, 0, 0, 0, 2, jpk )
                   z3d(ji,jj,jk) = ww(ji,jj,jk) * 0.5 * ( zrhop(ji,jj,jk-1) + zrhop(ji,jj,jk) )
          END_3D
          CALL iom_put( "wrhop", z3d )                  ! product of density and vertical velocity at W points

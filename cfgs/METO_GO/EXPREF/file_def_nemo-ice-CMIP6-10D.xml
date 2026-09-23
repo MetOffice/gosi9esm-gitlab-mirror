@@ -9,7 +9,7 @@
 ============================================================================================================
  -->
     
- <file_definition type="one_file" name="@expname@_@freq@_@startdate@_@enddate@" sync_freq="1mo" min_digits="4">
+ <file_definition type="one_file" name="@expname@_@freq@_@startdate@_@enddate@" sync_freq="10d" min_digits="4">
    
    <file_group id="10d" output_freq="10d"  output_level="10" enabled=".TRUE.">  <!-- 10d files -->   	
      <file id="file21" name_suffix="_icemod" description="ice variables" enabled=".true." >
@@ -40,9 +40,13 @@
        <field field_ref="icetsni"          name="sitsni" />
 
        <!-- ponds -->
+       <!-- TODO: No output, known bug in NEMO 5 (will be fixed in GOSI10 first) -->
        <field field_ref="dvpn_mlt"         name="dvpn_mlt" />
+       <!-- TODO: No output, known bug in NEMO 5 (will be fixed in GOSI10 first) -->
        <field field_ref="dvpn_lid"         name="dvpn_lid" />
+       <!-- TODO: No output, known bug in NEMO 5 (will be fixed in GOSI10 first) -->
        <field field_ref="dvpn_rnf"         name="dvpn_rnf" />
+       <!-- TODO: No output, known bug in NEMO 5 (will be fixed in GOSI10 first) -->
        <field field_ref="dvpn_drn"         name="dvpn_drn" />
        
        <!-- momentum -->
@@ -60,9 +64,8 @@
        <field field_ref="icestr"           name="sistre"  />
        <field field_ref="normstr"          name="normstr" />
        <field field_ref="sheastr"          name="sheastr" />
-       <field field_ref="isig1"            name="isig1"   />
-       <field field_ref="isig2"            name="isig2"   />
-       <field field_ref="isig3"            name="isig3"   />
+       <field field_ref="sig1_pnorm"       name="isig1"   />
+       <field field_ref="sig2_pnorm"       name="isig2"   />
        
        <!-- heat fluxes -->
        <field field_ref="qt_oce_ai"        name="qt_oce_ai"  />
