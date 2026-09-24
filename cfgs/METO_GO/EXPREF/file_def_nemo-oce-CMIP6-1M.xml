@@ -99,7 +99,7 @@
           <field field_ref="hflx_evap_cea" name="hfevapds" long_name="Temperature Flux due to Evaporation Expressed as Heat Flux Out of Sea Water" standard_name="temperature_flux_due_to_evaporation_expressed_as_heat_flux_out_of_sea_water" />
           <field field_ref="hflx_rnf_cea" name="hflx_rnf" long_name="Temperature Flux due to Runoff Expressed as Heat Flux into  Sea Water" standard_name="temperature_flux_due_to_runoff_expressed_as_heat_flux_into_sea_water" > hflx_rnf_cea </field> 
           <field field_ref="saltflx"      name="sfdsi" standard_name="downward_sea_ice_basal_salt_flux" />
-          <field field_ref="fwfice"       name="fsitherm"      unit="kg/m2/s"   />
+          <field field_ref="fmmflx"       name="fsitherm"      unit="kg/m2/s"   />
 <!-- TO FIX
           <field field_ref="Age" name="agessc" />
 -->
