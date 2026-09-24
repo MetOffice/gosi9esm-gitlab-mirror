@@ -61,7 +61,7 @@ CONTAINS
       ALLOCATE( z2d(jpi,jpj), z3d(jpi,jpj,jpk), zrhop(jpi,jpj,jpk) )
       !
       IF( iom_use("urhop") .OR. iom_use("vrhop") .OR. iom_use("wrhop") ) THEN
-         zrhop(:,:,1:jpkm1) = rhop(T2D(1),1:jpkm1) - 1000._wp         ! reference potential density to 1000 to avoid precision issues in rhop2 calculation
+         zrhop(:,:,1:jpkm1) = rhop(:,:,1:jpkm1) - 1000._wp         ! reference potential density to 1000 to avoid precision issues in rhop2 calculation
          zrhop(:,:,jpk) = 0._wp
       ENDIF
 
