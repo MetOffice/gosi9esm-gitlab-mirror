@@ -554,8 +554,9 @@ CONTAINS
 #if defined key_top
       ELSEIF( cdtype == 'TRC' ) THEN
          ALLOCATE( zdpt(jpmaxtrc)) !! needs jpmaxtrc to match the structure array dimension
-      ENDIF
 #endif
+      ENDIF
+
       ! init zdpt
       zdpt(:) = 0.0
       IF(lwp) WRITE(numout,*) ' isfcpl_cons -- zdpt allocated and initialized'
