@@ -266,7 +266,7 @@ CONTAINS
 #if defined key_xios
       IF( Agrif_Root() ) THEN
          IF( lk_oasis ) THEN
-            CALL cpl_init( "toyoce", ilocal_comm )                               ! nemo local communicator given by oasis
+            CALL cpl_init( "oceanx", ilocal_comm )                               ! nemo local communicator given by oasis
             CALL xios_initialize( "not used"       , local_comm =ilocal_comm )   ! send nemo communicator to xios
          ELSE
             CALL xios_initialize( "for_xios_mpi_id", return_comm=ilocal_comm )   ! nemo local communicator given by xios
@@ -276,7 +276,7 @@ CONTAINS
 #else
       IF( lk_oasis ) THEN
          IF( Agrif_Root() ) THEN
-            CALL cpl_init( "toyoce", ilocal_comm )          ! nemo local communicator given by oasis
+            CALL cpl_init( "oceanx", ilocal_comm )          ! nemo local communicator given by oasis
          ENDIF
          CALL mpp_start( ilocal_comm )
       ELSE
