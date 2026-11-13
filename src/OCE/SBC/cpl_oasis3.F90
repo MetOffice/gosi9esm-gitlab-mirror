@@ -368,8 +368,8 @@ CONTAINS
 
 
                   IF( sn_cfctl%l_oasout ) WRITE(numout,*) "Define", ji, jc, jm, " "//TRIM(zclname), " for ", OASIS_Out
-                     CALL oasis_def_var (ssnd(ji)%nid(jc,jm), zclname, id_part_2d_ext   , (/ 2, 1 /),   &
-                     &                OASIS_Out           , ishape_ext , OASIS_REAL, nerror )
+                     CALL oasis_def_var (ssnd(ji)%nid(jc,jm), zclname, id_part_2d   , (/ 2, 1 /),   &
+                     &                OASIS_Out           , ishape , OASIS_REAL, nerror )
 
                   IF( nerror /= OASIS_Ok ) THEN
                      WRITE(numout,*) 'Failed to define transient ', ji, jc, jm, " "//TRIM(zclname)
@@ -454,8 +454,8 @@ CONTAINS
                     var_nodims(1) = 2
                     var_nodims(2) = 1 ! Modify this value to cater for bundled fields.
 
-                    CALL oasis_def_var (srcv(ji)%nid(jc,jm), zclname, id_part_2d_ext   , var_nodims,   &
-                                        OASIS_In           , ishape_ext , OASIS_REAL, nerror )
+                    CALL oasis_def_var (srcv(ji)%nid(jc,jm), zclname, id_part_2d   , var_nodims,   &
+                                        OASIS_In           , ishape , OASIS_REAL, nerror )
 
                   ENDIF 
 
@@ -523,7 +523,7 @@ CONTAINS
 
                ! The field is "put" directly, using appropriate start/end indexing - i.e. we don't
                ! copy it to an intermediate buffer. 
-               CALL oasis_put ( ssnd(kid)%nid(jc,jm), kstep, pdata(Nis0_ext:Nie0_ext,Njs0_ext:Nje0_ext,jc), kinfo )
+               CALL oasis_put ( ssnd(kid)%nid(jc,jm), kstep, pdata(Nis0:Nie0,Njs0:Nje0,jc), kinfo )
 
                IF ( sn_cfctl%l_oasout ) THEN
                   IF ( kinfo == OASIS_Sent     .OR. kinfo == OASIS_ToRest .OR.   &
@@ -533,9 +533,9 @@ CONTAINS
                      WRITE(numout,*) 'oasis_put: ivarid ', ssnd(kid)%nid(jc,jm)
                      WRITE(numout,*) 'oasis_put:  kstep ', kstep
                      WRITE(numout,*) 'oasis_put:   info ', kinfo
-                     WRITE(numout,*) '     - Minimum value is ', MINVAL(pdata(Nis0_ext:Nie0_ext,Njs0_ext:Nje0_ext,jc))
-                     WRITE(numout,*) '     - Maximum value is ', MAXVAL(pdata(Nis0_ext:Nie0_ext,Njs0_ext:Nje0_ext,jc))
-                     WRITE(numout,*) '     -     Sum value is ',    SUM(pdata(Nis0_ext:Nie0_ext,Njs0_ext:Nje0_ext,jc))
+                     WRITE(numout,*) '     - Minimum value is ', MINVAL(pdata(Nis0:Nie0,Njs0:Nje0,jc))
+                     WRITE(numout,*) '     - Maximum value is ', MAXVAL(pdata(Nis0:Nie0,Njs0:Nje0,jc))
+                     WRITE(numout,*) '     -     Sum value is ',    SUM(pdata(Nis0:Nie0,Njs0:Nje0,jc))
                      WRITE(numout,*) '****************'
                      CALL FLUSH(numout)
                   ENDIF
@@ -581,7 +581,7 @@ CONTAINS
 
             IF( srcv(kid)%nid(jc,jm) /= -1 ) THEN
 
-               CALL oasis_get ( srcv(kid)%nid(jc,jm), kstep, exfld_ext, kinfo )
+               CALL oasis_get ( srcv(kid)%nid(jc,jm), kstep, exfld, kinfo )
 
                llaction =  kinfo == OASIS_Recvd   .OR. kinfo == OASIS_FromRest .OR.   &
                   &        kinfo == OASIS_RecvOut .OR. kinfo == OASIS_FromRestOut
@@ -595,13 +595,13 @@ CONTAINS
                   kinfo = OASIS_Rcv
                   lrcv=.TRUE. 
                   IF( ll_1st ) THEN
-                     pdata(Nis0_ext:Nie0_ext,Njs0_ext:Nje0_ext,jc) =   exfld_ext(:,:) * pmask(Nis0_ext:Nie0_ext,Njs0_ext:Nje0_ext,jm)
+                     pdata(Nis0:Nie0,Njs0:Nje0,jc) =   exfld(:,:) * pmask(Nis0:Nie0,Njs0:Nje0,jm)
 
                      ll_1st = .FALSE.
                   ELSE
 
-                     pdata(Nis0_ext:Nie0_ext,Njs0_ext:Nje0_ext,jc) = pdata(Nis0_ext:Nie0_ext,Njs0_ext:Nje0_ext,jc)   &
-                        &                                + exfld_ext(:,:) * pmask(Nis0_ext:Nie0_ext,Njs0_ext:Nje0_ext,jm)
+                     pdata(Nis0:Nie0,Njs0:Nje0,jc) = pdata(Nis0:Nie0,Njs0:Nje0,jc)   &
+                        &                                + exfld(:,:) * pmask(Nis0:Nie0,Njs0:Nje0,jm)
                   ENDIF
 
                   IF ( sn_cfctl%l_oasout ) THEN
@@ -610,9 +610,9 @@ CONTAINS
                      WRITE(numout,*) 'oasis_get: ivarid '  , srcv(kid)%nid(jc,jm)
                      WRITE(numout,*) 'oasis_get:   kstep', kstep
                      WRITE(numout,*) 'oasis_get:   info ', kinfo
-                     WRITE(numout,*) '     - Minimum value is ', MINVAL(pdata(Nis0_ext:Nie0_ext,Njs0_ext:Nje0_ext,jc))
-                     WRITE(numout,*) '     - Maximum value is ', MAXVAL(pdata(Nis0_ext:Nie0_ext,Njs0_ext:Nje0_ext,jc))
-                     WRITE(numout,*) '     -     Sum value is ',    SUM(pdata(Nis0_ext:Nie0_ext,Njs0_ext:Nje0_ext,jc))
+                     WRITE(numout,*) '     - Minimum value is ', MINVAL(pdata(Nis0:Nie0,Njs0:Nje0,jc))
+                     WRITE(numout,*) '     - Maximum value is ', MAXVAL(pdata(Nis0:Nie0,Njs0:Nje0,jc))
+                     WRITE(numout,*) '     -     Sum value is ',    SUM(pdata(Nis0:Nie0,Njs0:Nje0,jc))
                      WRITE(numout,*) '****************'
                      CALL FLUSH(numout)
                   ENDIF
