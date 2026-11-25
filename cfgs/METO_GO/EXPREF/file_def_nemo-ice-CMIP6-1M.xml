@@ -40,9 +40,13 @@
        <field field_ref="icetsni"          name="sitsni" />
 
        <!-- ponds -->
+       <!-- TODO: No output, known bug in NEMO 5 (will be fixed in GOSI10 first) -->
        <field field_ref="dvpn_mlt"         name="dvpn_mlt" />
+       <!-- TODO: No output, known bug in NEMO 5 (will be fixed in GOSI10 first) -->
        <field field_ref="dvpn_lid"         name="dvpn_lid" />
+       <!-- TODO: No output, known bug in NEMO 5 (will be fixed in GOSI10 first) -->
        <field field_ref="dvpn_rnf"         name="dvpn_rnf" />
+       <!-- TODO: No output, known bug in NEMO 5 (will be fixed in GOSI10 first) -->
        <field field_ref="dvpn_drn"         name="dvpn_drn" />
        
        <!-- momentum -->
@@ -60,9 +64,8 @@
        <field field_ref="icestr"           name="sistre"  />
        <field field_ref="normstr"          name="normstr" />
        <field field_ref="sheastr"          name="sheastr" />
-       <field field_ref="isig1"            name="isig1"   />
-       <field field_ref="isig2"            name="isig2"   />
-       <field field_ref="isig3"            name="isig3"   />
+       <field field_ref="sig1_pnorm"       name="isig1"   />
+       <field field_ref="sig2_pnorm"       name="isig2"   />
        
        <!-- heat fluxes -->
        <field field_ref="qt_oce_ai"        name="qt_oce_ai"  />
