@@ -40,9 +40,13 @@
        <field field_ref="icetsni"          name="sitsni" />
 
        <!-- ponds -->
+       <!-- TODO: No output, known bug in NEMO 5 (will be fixed in GOSI10 first) -->
        <field field_ref="dvpn_mlt"         name="dvpn_mlt" />
+       <!-- TODO: No output, known bug in NEMO 5 (will be fixed in GOSI10 first) -->
        <field field_ref="dvpn_lid"         name="dvpn_lid" />
+       <!-- TODO: No output, known bug in NEMO 5 (will be fixed in GOSI10 first) -->
        <field field_ref="dvpn_rnf"         name="dvpn_rnf" />
+       <!-- TODO: No output, known bug in NEMO 5 (will be fixed in GOSI10 first) -->
        <field field_ref="dvpn_drn"         name="dvpn_drn" />
        
        <!-- momentum -->
